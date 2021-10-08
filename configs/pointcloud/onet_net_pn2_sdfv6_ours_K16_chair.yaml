@@ -1,0 +1,68 @@
+method: onet
+data:
+  input_type: pointcloud
+  path: data/ShapeNet
+  classes: ["03001627",]
+  # test_classes: ["04256520", "02691156"]
+  # path: data/FAUST/
+  # classes: ['50004']
+  # test_classes: ['50004']
+  pointcloud_n: 3000
+  pointcloud_noise: 0.005
+  points_subsample: 2048
+  pointcloud_hole: false
+  pointcloud_outlier: false
+model:
+  identifier: onet_net_pn2_ours_K16_chair
+  encoder_latent: null
+  decoder: ours
+  encoder: pointnet2
+  K: 16
+  encoder_kwargs:
+      hidden_dim: 128
+  c_dim: 128
+  resolution: 32
+  z_dim: 0
+  loss:
+    kl_w: 0.0
+    rec_error: cross_entropy
+    rec_error_w: 1.0
+    voxel_error_w: 0.0
+training:
+  out_dir: out/pointcloud/onet_net_pn2_ours_K20_chair/
+  batch_size: 14
+  model_selection_metric: iou
+  model_selection_mode: maximize
+  # skip_training: True
+  validate_every: 20
+  visualize_every: 1000
+  backup_every: 500
+  optimizer: ADAM
+  lr: 0.005
+  scheduler: MultiStepLR
+  scheduler_params: 
+    milestones: [ 50, 150, 250]
+    gamma: 0.2
+test:
+  threshold: 0.5
+  eval_mesh: true
+  eval_pointcloud: false
+  points_per_batch: 25000
+  batch_size: 4
+  model_file: model_best.pt
+generation:
+  batch_size: 100000
+  n_x: 128
+  n_z: 1
+  refine: false
+  refinement_step: 0
+  vis_n_outputs: 30
+  generate_mesh: true
+  generate_pointcloud: false
+  generation_dir: generation
+  use_sampling: false
+  resolution_0: 32
+  upsampling_steps: 2
+  copy_groundtruth: true
+  copy_input: true
+
